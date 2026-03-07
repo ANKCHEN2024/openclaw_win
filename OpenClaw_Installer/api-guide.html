@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw AI 接入指南 - 专业级 API 集成</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00b359;
+            --primary-dark: #008040;
+            --secondary: #0086b3;
+            --accent: #cc3366;
+            --success: #00b359;
+            --warning: #cc8400;
+            --danger: #cc3333;
+            --info: #0086b3;
+            --bg-dark: #f8f9fa;
+            --bg-darker: #e9ecef;
+            --bg-light: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --text-muted: #adb5bd;
+            --border-color: #dee2e6;
+            --shadow-sm: 0 1px 3px rgba(0, 179, 89, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 179, 89, 0.15);
+            --shadow-lg: 0 10px 15px rgba(0, 179, 89, 0.2);
+            --border-radius-sm: 4px;
+            --border-radius-md: 8px;
+            --border-radius-lg: 12px;
+        }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', monospace;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-darker);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: var(--bg-light);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo::before {
+            content: '\f0e7';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-dark) 100%);
+            padding: 120px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23333" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--bg-darker);
+            padding: 15px 30px;
+            border-radius: var(--border-radius-md);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .info-banner {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border: 1px solid #90caf9;
+            border-radius: var(--border-radius-md);
+            padding: 20px 30px;
+            margin: 40px auto;
+            max-width: 800px;
+            text-align: center;
+        }
+        
+        .info-banner h3 {
+            color: #1565c0;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .info-banner p {
+            color: #1976d2;
+            font-size: 0.95rem;
+        }
+        
+        .main-content {
+            padding: 80px 0;
+        }
+        
+        .section {
+            margin-bottom: 80px;
+            position: relative;
+        }
+        
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+        
+        .section-header {
+            margin-bottom: 40px;
+        }
+        
+        .section-header h2 {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+        
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 700px;
+        }
+        
+        .platform-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .platform-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: 40px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        .platform-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
+        }
+        
+        .platform-card .header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .platform-card .icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .aliyun {
+            background: linear-gradient(135deg, #FF6A00, #FF9E41);
+        }
+        
+        .silicon {
+            background: linear-gradient(135deg, #00C853, #66BB6A);
+        }
+        
+        .platform-card h3 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .platform-card .url {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .platform-card .features {
+            list-style: none;
+            margin: 20px 0;
+        }
+        
+        .platform-card .features li {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .platform-card .features li::before {
+            content: '✓';
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: 25px;
+            margin: 25px 0;
+            position: relative;
+            overflow: auto;
+            min-width: 100%;
+        }
+        
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .code-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .copy-button {
+            background: var(--bg-light);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-button:hover {
+            background: var(--primary);
+            color: var(--bg-darker);
+            border-color: var(--primary);
+        }
+        
+        pre {
+            margin: 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #343a40;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        code {
+            background: none;
+            padding: 0;
+            color: #343a40;
+        }
+        
+        .model-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .model-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .model-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+            border-color: var(--primary);
+        }
+        
+        .model-card.recommended {
+            border-color: var(--primary);
+        }
+        
+        .model-card.recommended::before {
+            content: '推荐';
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: var(--primary);
+            color: var(--bg-darker);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: var(--border-radius-sm);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .model-card h4 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+        
+        .model-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        
+        .model-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .model-tag {
+            background: var(--bg-darker);
+            color: var(--text-secondary);
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .model-tag.primary {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--primary);
+        }
+        
+        .promo-section {
+            background: linear-gradient(135deg, #f0fff4, #e6ffed);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: 40px;
+            margin: 40px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .promo-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        .promo-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .promo-header h3 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .promo-result {
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .promo-link {
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+            color: var(--primary);
+        }
+        
+        .promo-note {
+            background: #fff3e0;
+            border: 1px solid #ffcc80;
+            border-radius: var(--border-radius-sm);
+            padding: 12px 20px;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #e65100;
+            text-align: center;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+        }
+        
+        .data-table th {
+            background: var(--bg-darker);
+            color: var(--primary);
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .data-table tr:hover {
+            background: rgba(0, 255, 136, 0.05);
+        }
+        
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .price-note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 15px;
+            text-align: center;
+        }
+        
+        .faq {
+            margin: 40px 0;
+        }
+        
+        .faq-item {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: 25px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-item:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .faq-item h4 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+        
+        .faq-item p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        footer {
+            background: var(--bg-light);
+            border-top: 1px solid var(--border-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .footer-logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            list-style: none;
+        }
+        
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        .footer-copyright {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: 30px;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .section-header h2 {
+                font-size: 2rem;
+            }
+            
+            .platform-cards,
+            .model-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="nav">
+                <a href="#" class="logo">OpenClaw AI</a>
+                <ul class="nav-links">
+                    <li><a href="#platforms">平台</a></li>
+                    <li><a href="#models">模型</a></li>
+                    <li><a href="#config">配置</a></li>
+                    <li><a href="#promo">邀请</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content fade-in">
+                <h1><i class="fas fa-robot"></i> OpenClaw AI 接入指南</h1>
+                <p>专业级 API 集成方案 | 阿里云百炼 · 硅基流动</p>
+                <a href="#platforms" class="cta-button">开始配置</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="info-banner">
+            <h3><i class="fas fa-info-circle"></i> 平台服务状态</h3>
+            <p>各平台服务状态请访问官方页面查看。阿里云百炼和硅基流动均为稳定可靠的服务提供商。</p>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <section class="section" id="platforms">
+                <div class="section-header">
+                    <h2><i class="fas fa-plug"></i> 平台集成</h2>
+                    <p>无缝集成主流 AI 服务平台，提供统一的接入体验</p>
+                </div>
+                
+                <div class="platform-cards">
+                    <div class="platform-card">
+                        <div class="header">
+                            <div class="icon aliyun">ALI</div>
+                            <h3>阿里云百炼</h3>
+                        </div>
+                        <a href="https://dashscope.aliyuncs.com/" target="_blank" class="url">https://dashscope.aliyuncs.com/</a>
+                        <ul class="features">
+                            <li>提供 Qwen 系列模型</li>
+                            <li>国内访问速度快</li>
+                            <li>企业级稳定性</li>
+                            <li>完善的 API 文档</li>
+                            <li>新用户 100 万 tokens 免费额度</li>
+                        </ul>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">配置命令</span>
+                                <button class="copy-button" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre><code>npx openclaw config set providers.dashscope.apiKey "your-api-key"
+npx openclaw config set providers.dashscope.baseURL "https://dashscope.aliyuncs.com/compatible-mode/v1"
+npx openclaw config set providers.dashscope.model "qwen-plus"</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="platform-card">
+                        <div class="header">
+                            <div class="icon silicon">SIL</div>
+                            <h3>硅基流动</h3>
+                        </div>
+                        <a href="https://siliconflow.cn" target="_blank" class="url">https://siliconflow.cn</a>
+                        <ul class="features">
+                            <li>聚合多种优质模型</li>
+                            <li>性价比极高</li>
+                            <li>注册送免费额度（约2000万Token）</li>
+                            <li>支持邀请奖励机制</li>
+                            <li>提供 DeepSeek、Qwen 等模型</li>
+                        </ul>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span class="code-title">配置命令</span>
+                                <button class="copy-button" onclick="copyCode(this)">复制</button>
+                            </div>
+                            <pre><code>npx openclaw config set providers.siliconflow.apiKey "your-api-key"
+npx openclaw config set providers.siliconflow.baseURL "https://api.siliconflow.cn/v1"
+npx openclaw config set providers.siliconflow.model "deepseek-ai/DeepSeek-V2-Chat"</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="models">
+                <div class="section-header">
+                    <h2><i class="fas fa-brain"></i> 模型推荐</h2>
+                    <p>精心筛选的优质模型，满足不同场景需求</p>
+                </div>
+                
+                <div class="model-cards">
+                    <div class="model-card recommended">
+                        <h4>deepseek-ai/DeepSeek-V2-Chat</h4>
+                        <p>强力推荐！性能出色，价格实惠，综合表现优异</p>
+                        <div class="model-tags">
+                            <span class="model-tag primary">强烈推荐</span>
+                            <span class="model-tag">高性价比</span>
+                            <span class="model-tag">通用</span>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card">
+                        <h4>qwen-plus</h4>
+                        <p>平衡模式，效果好，适合大多数应用场景</p>
+                        <div class="model-tags">
+                            <span class="model-tag primary">推荐</span>
+                            <span class="model-tag">平衡</span>
+                            <span class="model-tag">通用</span>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card">
+                        <h4>deepseek-ai/DeepSeek-Coder-V2</h4>
+                        <p>编程专用模型，代码生成和理解能力极强</p>
+                        <div class="model-tags">
+                            <span class="model-tag primary">编程专家</span>
+                            <span class="model-tag">专业</span>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card">
+                        <h4>Qwen/Qwen2-72B-Instruct</h4>
+                        <p>阿里72B大模型，能力全面，适合复杂任务</p>
+                        <div class="model-tags">
+                            <span class="model-tag">高级</span>
+                            <span class="model-tag">全面</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="promo">
+                <div class="section-header">
+                    <h2>邀请计划</h2>
+                    <p>分享邀请链接，获得额外奖励</p>
+                </div>
+                
+                <div class="promo-section">
+                    <div class="promo-header">
+                        <h3><i class="fas fa-gift"></i> 硅基流动邀请福利</h3>
+                        <p>使用邀请链接注册，双方均可获得硅基流动额外奖励额度！</p>
+                    </div>
+                    
+                    <div class="promo-result" id="promoResult">
+                        <div class="promo-link" id="promoLink">https://cloud.siliconflow.cn/i/XT034RLE</div>
+                        <button class="copy-button" onclick="copyPromoLink()">复制邀请链接</button>
+                    </div>
+                    
+                    <div class="promo-note">
+                        <i class="fas fa-info-circle"></i> 此为推荐链接，通过此链接注册后，邀请者和被邀请者双方均可获得奖励。
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="config">
+                <div class="section-header">
+                    <h2><i class="fas fa-cog"></i> 配置指南</h2>
+                    <p>详细的配置指南，帮助您快速集成</p>
+                </div>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-title">完整配置示例</span>
+                        <button class="copy-button" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <pre><code>{  
+  "providers": {  
+    "dashscope": {  
+      "apiKey": "sk-xxxxxxxx",  
+      "baseURL": "https://dashscope.aliyuncs.com/compatible-mode/v1",  
+      "model": "qwen-plus"  
+    },  
+    "siliconflow": {  
+      "apiKey": "sk-xxxxxxxx",  
+      "baseURL": "https://api.siliconflow.cn/v1",  
+      "model": "deepseek-ai/DeepSeek-V2-Chat"  
+    }  
+  },  
+  "agents": {  
+    "defaults": {  
+      "model": "siliconflow",  
+      "temperature": 0.7,  
+      "maxTokens": 4096  
+    }  
+  }  
+}</code></pre>
+                </div>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-title">切换模型命令</span>
+                        <button class="copy-button" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <pre><code>npx openclaw config set agents.defaults.model "dashscope"
+npx openclaw config set agents.defaults.model "siliconflow"
+
+npx openclaw config set agents.defaults.temperature 0.5
+npx openclaw config set agents.defaults.maxTokens 8192</code></pre>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-line"></i> 费用参考</h2>
+                    <p>各平台费用对比，帮助您选择最适合的方案</p>
+                </div>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>平台</th>
+                            <th>免费额度</th>
+                            <th>特点</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>阿里云百炼</td>
+                            <td>新用户 100 万 tokens</td>
+                            <td>国内速度快，稳定可靠，企业级支持</td>
+                        </tr>
+                        <tr>
+                            <td>硅基流动</td>
+                            <td>注册送约 2000 万 tokens</td>
+                            <td>性价比最高，模型丰富，支持邀请奖励</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p class="price-note"><i class="fas fa-info-circle"></i> 以上免费额度信息仅供参考，具体以各平台官方页面为准。价格可能随时调整，请在使用前查看官方最新定价。</p>
+            </section>
+
+            <section class="section">
+                <div class="section-header">
+                    <h2><i class="fas fa-question-circle"></i> 常见问题</h2>
+                    <p>常见问题解答</p>
+                </div>
+                
+                <div class="faq">
+                    <div class="faq-item">
+                        <h4>API Key 安全性如何？</h4>
+                        <p>API Key 只存储在本地配置文件中，不会上传到任何服务器。建议定期更换密钥，避免泄露。</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>如何查看 API 调用费用？</h4>
+                        <p>各平台都提供控制台查看使用量和费用，建议定期检查消费情况，设置预算提醒。</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>可以同时使用多个 Provider 吗？</h4>
+                        <p>可以！您可以配置多个 provider，通过修改 <code>agents.defaults.model</code> 在不同场景下切换使用。</p>
+                    </div>
+                    <div class="faq-item">
+                        <h4>推荐哪个平台？</h4>
+                        <p><strong>新手推荐：</strong> 硅基流动（性价比高，注册就送大量额度）<br>
+                        <strong>企业用户：</strong> 阿里云百炼（稳定可靠，企业级支持）</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">OpenClaw AI</div>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    专业级 API 集成方案 | 让 AI 接入更简单
+                </p>
+                <ul class="footer-links">
+                    <li><a href="https://docs.openclaw.ai/" target="_blank">官方文档</a></li>
+                    <li><a href="https://siliconflow.cn" target="_blank">硅基流动</a></li>
+                    <li><a href="https://dashscope.aliyuncs.com/" target="_blank">阿里云百炼</a></li>
+                </ul>
+                <div class="footer-copyright">
+                    © 2026 OpenClaw Team. All rights reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        window.onload = function() {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach((section, index) => {
+                setTimeout(() => {
+                    section.classList.add('fade-in');
+                }, index * 200);
+            });
+        };
+        
+        function copyCode(button) {
+            const codeBlock = button.closest('.code-block');
+            const code = codeBlock.querySelector('code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '已复制！';
+                button.style.background = 'var(--primary)';
+                button.style.color = 'var(--bg-darker)';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = 'var(--bg-light)';
+                    button.style.color = 'var(--text-secondary)';
+                }, 2000);
+            });
+        }
+        
+        function copyPromoLink() {
+            const promoLink = document.getElementById('promoLink').textContent;
+            navigator.clipboard.writeText(promoLink).then(() => {
+                alert('邀请链接已复制到剪贴板！');
+            });
+        }
+        
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
