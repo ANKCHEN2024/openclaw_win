@@ -570,6 +570,10 @@
             border-bottom: none;
         }
         
+        .data-table strong {
+            color: var(--text-primary);
+        }
+        
         .price-note {
             font-size: 0.8rem;
             color: var(--text-muted);
@@ -1011,47 +1015,167 @@ npx openclaw config set agents.defaults.permissions.allowWriteFiles true</code><
             <section class="section" id="models">
                 <div class="section-header">
                     <h2><i class="fas fa-brain"></i> 模型推荐</h2>
-                    <p>精心筛选的优质模型，满足不同场景需求</p>
+                    <p>OpenClaw 官方推荐模型，覆盖国内外主流大模型</p>
                 </div>
+                
+                <h3 style="margin: 30px 0 20px; color: var(--text-primary);"><i class="fas fa-flag" style="color: var(--primary);"></i> 国内模型推荐</h3>
                 
                 <div class="model-cards">
                     <div class="model-card recommended">
-                        <h4>deepseek-ai/DeepSeek-V2-Chat</h4>
-                        <p>强力推荐！性能出色，价格实惠，综合表现优异</p>
+                        <h4>Qwen3-8B / Qwen3.5-Plus</h4>
+                        <p>阿里通义千问系列，中文能力强，性价比高，支持长上下文</p>
                         <div class="model-tags">
                             <span class="model-tag primary">强烈推荐</span>
+                            <span class="model-tag">中文优化</span>
                             <span class="model-tag">高性价比</span>
-                            <span class="model-tag">通用</span>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card recommended">
+                        <h4>DeepSeek-V3 / DeepSeek-Coder-V2</h4>
+                        <p>深度求索系列，代码能力极强，价格实惠，适合编程任务</p>
+                        <div class="model-tags">
+                            <span class="model-tag primary">编程首选</span>
+                            <span class="model-tag">代码专家</span>
+                            <span class="model-tag">免费额度</span>
                         </div>
                     </div>
                     
                     <div class="model-card">
-                        <h4>qwen-plus</h4>
-                        <p>平衡模式，效果好，适合大多数应用场景</p>
+                        <h4>Kimi (Moonshot)</h4>
+                        <p>月之暗面出品，超长上下文支持，适合文档分析和长文本处理</p>
                         <div class="model-tags">
-                            <span class="model-tag primary">推荐</span>
-                            <span class="model-tag">平衡</span>
-                            <span class="model-tag">通用</span>
+                            <span class="model-tag">长上下文</span>
+                            <span class="model-tag">文档处理</span>
                         </div>
                     </div>
                     
                     <div class="model-card">
-                        <h4>deepseek-ai/DeepSeek-Coder-V2</h4>
-                        <p>编程专用模型，代码生成和理解能力极强</p>
+                        <h4>GLM-4-Flash</h4>
+                        <p>智谱清言系列，响应速度快，免费额度充足，适合日常对话</p>
                         <div class="model-tags">
-                            <span class="model-tag primary">编程专家</span>
-                            <span class="model-tag">专业</span>
+                            <span class="model-tag">免费额度</span>
+                            <span class="model-tag">快速响应</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 style="margin: 40px 0 20px; color: var(--text-primary);"><i class="fas fa-globe" style="color: var(--secondary);"></i> 国外模型推荐</h3>
+                
+                <div class="model-cards">
+                    <div class="model-card recommended">
+                        <h4>Claude 4.6 Opus / Sonnet</h4>
+                        <p>Anthropic 出品，代码生成和逻辑推理能力顶尖，适合复杂任务</p>
+                        <div class="model-tags">
+                            <span class="model-tag primary">顶级性能</span>
+                            <span class="model-tag">代码专家</span>
+                            <span class="model-tag">长上下文</span>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card recommended">
+                        <h4>GPT-4o / GPT-4-Turbo</h4>
+                        <p>OpenAI 旗舰模型，综合能力最强，多模态支持，生态完善</p>
+                        <div class="model-tags">
+                            <span class="model-tag primary">综合最强</span>
+                            <span class="model-tag">多模态</span>
+                            <span class="model-tag">生态完善</span>
                         </div>
                     </div>
                     
                     <div class="model-card">
-                        <h4>Qwen/Qwen2-72B-Instruct</h4>
-                        <p>阿里72B大模型，能力全面，适合复杂任务</p>
+                        <h4>Gemini 2.0 Flash / Pro</h4>
+                        <p>Google 出品，超长上下文（100万+ tokens），多模态能力强</p>
                         <div class="model-tags">
-                            <span class="model-tag">高级</span>
-                            <span class="model-tag">全面</span>
+                            <span class="model-tag">超长上下文</span>
+                            <span class="model-tag">多模态</span>
                         </div>
                     </div>
+                    
+                    <div class="model-card">
+                        <h4>Llama 3.3 70B</h4>
+                        <p>Meta 开源模型，可本地部署，隐私安全，适合自建服务</p>
+                        <div class="model-tags">
+                            <span class="model-tag">开源免费</span>
+                            <span class="model-tag">可本地部署</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 style="margin: 40px 0 20px; color: var(--text-primary);"><i class="fas fa-plug" style="color: var(--accent);"></i> API 聚合平台推荐</h3>
+                
+                <table class="data-table" style="margin: 20px 0;">
+                    <thead>
+                        <tr>
+                            <th>平台</th>
+                            <th>特点</th>
+                            <th>推荐场景</th>
+                            <th>国内访问</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>硅基流动</strong></td>
+                            <td>国内模型聚合，延迟低，免费额度多</td>
+                            <td>实时交互、日常开发</td>
+                            <td>✅ 快速</td>
+                        </tr>
+                        <tr>
+                            <td><strong>阿里云百炼</strong></td>
+                            <td>Qwen 系列官方，稳定可靠，企业支持</td>
+                            <td>企业应用、生产环境</td>
+                            <td>✅ 快速</td>
+                        </tr>
+                        <tr>
+                            <td><strong>OpenRouter</strong></td>
+                            <td>全球模型聚合，模型最全</td>
+                            <td>模型探索、实验测试</td>
+                            <td>⚠️ 需代理</td>
+                        </tr>
+                        <tr>
+                            <td><strong>星链 4SAPI</strong></td>
+                            <td>智能路由，高可用性，支持缓存计费</td>
+                            <td>企业级生产环境</td>
+                            <td>✅ 快速</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="info-banner" style="margin: 30px 0;">
+                    <h3><i class="fas fa-lightbulb"></i> OpenClaw 官方建议</h3>
+                    <p><strong>最佳实践：</strong>使用最强最新一代模型以获得最佳质量和安全性。推荐 Claude 4.6 或 GPT-4o 用于复杂任务，DeepSeek 或 Qwen 用于日常开发。</p>
+                </div>
+                
+                <h3 style="margin: 40px 0 20px; color: var(--text-primary);"><i class="fas fa-cog" style="color: var(--text-secondary);"></i> 模型配置示例</h3>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-title">国内模型配置（硅基流动）</span>
+                        <button class="copy-button" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <pre><code>npx openclaw config set models.providers.siliconflow.baseUrl "https://api.siliconflow.cn/v1"
+npx openclaw config set models.providers.siliconflow.apiKey "your-api-key"
+npx openclaw config set agents.defaults.model.primary "siliconflow/deepseek-ai/DeepSeek-V3"</code></pre>
+                </div>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-title">国外模型配置（OpenRouter）</span>
+                        <button class="copy-button" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <pre><code>npx openclaw config set models.providers.openrouter.baseUrl "https://openrouter.ai/api/v1"
+npx openclaw config set models.providers.openrouter.apiKey "your-api-key"
+npx openclaw config set agents.defaults.model.primary "openrouter/anthropic/claude-4.6-opus"</code></pre>
+                </div>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-title">本地模型配置（Ollama）</span>
+                        <button class="copy-button" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <pre><code>npx openclaw config set models.providers.ollama.baseUrl "http://localhost:11434/v1"
+npx openclaw config set models.providers.ollama.apiKey "ollama-local"
+npx openclaw config set agents.defaults.model.primary "ollama/qwen2.5:14b"</code></pre>
                 </div>
             </section>
 
