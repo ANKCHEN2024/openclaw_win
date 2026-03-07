@@ -147,30 +147,30 @@ begin
 
     TokenFilePath := ExpandConstant('{app}\token.txt');
     TokenFileContent := 'OpenClaw Gateway Token' + #13#10 + #13#10 +
-      'Your authentication token:' + #13#10 +
+      '您的身份验证令牌:' + #13#10 +
       GeneratedToken + #13#10 + #13#10 +
-      'Control Panel URL:' + #13#10 +
+      '控制面板地址:' + #13#10 +
       'http://127.0.0.1:18789/?token=' + GeneratedToken + #13#10 + #13#10 +
-      'IMPORTANT: Keep this token secure!' + #13#10 +
-      'Anyone with this token can access your Gateway.';
+      '重要提示：请妥善保管此令牌！' + #13#10 +
+      '任何拥有此令牌的人都可以访问您的网关。';
     SaveStringToFile(TokenFilePath, TokenFileContent, False);
 
     Exec('cmd.exe', '/c start /min npx openclaw gateway', '', SW_HIDE, ewNoWait, ResultCode);
     Sleep(3000);
     Exec('cmd.exe', '/c start http://127.0.0.1:18789/?token=' + GeneratedToken, '', SW_HIDE, ewNoWait, ResultCode);
 
-    MsgBox('OpenClaw Installation Complete!' + #13#10 + #13#10 +
-           'Token Authentication: ENABLED' + #13#10 +
-           'Agent permissions: FULL' + #13#10 + #13#10 +
-           'Your Token has been:' + #13#10 +
-           '- Saved to config file' + #13#10 +
-           '- Saved to: ' + ExpandConstant('{app}\token.txt') + #13#10 +
-           '- Auto-injected in browser URL' + #13#10 + #13#10 +
-           'Control Panel: http://127.0.0.1:18789/' + #13#10 + #13#10 +
-           'Keep your token secure!',
+    MsgBox('OpenClaw 安装完成！' + #13#10 + #13#10 +
+           '令牌认证：已启用' + #13#10 +
+           '智能体权限：完全权限' + #13#10 + #13#10 +
+           '您的令牌已：' + #13#10 +
+           '- 保存到配置文件' + #13#10 +
+           '- 保存到：' + ExpandConstant('{app}\token.txt') + #13#10 +
+           '- 自动注入浏览器地址' + #13#10 + #13#10 +
+           '控制面板：http://127.0.0.1:18789/' + #13#10 + #13#10 +
+           '请妥善保管您的令牌！',
            mbInformation, MB_OK);
-    if MsgBox('Open API Guide?' + #13#10 + #13#10 +
-              'Guide: Aliyun Bailian, SiliconFlow config, Model recommendations',
+    if MsgBox('是否打开接入指南？' + #13#10 + #13#10 +
+              '指南包含：阿里云百炼、硅基流动配置、模型推荐',
               mbConfirmation, MB_YESNO) = IDYES then
     begin
       Exec('cmd.exe', '/c start "" "' + ExpandConstant('{app}\api-guide.html') + '"', '', SW_HIDE, ewNoWait, ResultCode);
@@ -185,7 +185,7 @@ begin
   if CurUninstallStep = usPostUninstall then
   begin
     Exec('cmd.exe', '/c schtasks /Delete /TN "OpenClaw Gateway" /F', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
-    MsgBox('OpenClaw has been successfully uninstalled!' + #13#10 + #13#10 + 'Thank you for using!',
+    MsgBox('OpenClaw 已成功卸载！' + #13#10 + #13#10 + '感谢您的使用！',
            mbInformation, MB_OK);
   end;
 end;

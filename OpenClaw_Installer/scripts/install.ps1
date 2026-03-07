@@ -31,6 +31,23 @@ function Write-Err {
     Write-Host "[Error] $Message" -ForegroundColor Red
 }
 
+function Set-OpenClawConfig {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Key,
+        [Parameter(Mandatory = $true)]
+        [string]$Value,
+        [string]$Message
+    )
+    
+    if (-not $Message) {
+        $Message = "  Setting $Key=$Value..."
+    }
+    
+    Write-Host $Message -ForegroundColor Gray
+    $null = & npx openclaw config set $Key $Value 2>&1 | Out-String
+}
+
 # Check Admin
 $currentUser = [Security.Principal.WindowsIdentity]::GetCurrent()
 $principal = New-Object Security.Principal.WindowsPrincipal($currentUser)
@@ -110,41 +127,26 @@ Write-Step "Configuring OpenClaw..."
 Write-Host "  Running doctor..." -ForegroundColor Gray
 $null = & npx openclaw doctor --fix 2>&1 | Out-String
 
-Write-Host "  Setting gateway mode..." -ForegroundColor Gray
-$null = & npx openclaw config set gateway.mode local 2>&1 | Out-String
+Set-OpenClawConfig -Key "gateway.mode" -Value "local" -Message "  Setting gateway mode..."
 
 # ====== FIX: Disable token auth ======
-Write-Host "  Disabling token authentication..." -ForegroundColor Gray
-$null = & npx openclaw config set gateway.auth.mode none 2>&1 | Out-String
+Set-OpenClawConfig -Key "gateway.auth.mode" -Value "none" -Message "  Disabling token authentication..."
 
 # ====== CONFIGURE AGENT FULL PERMISSIONS ======
 Write-Step "Configuring AGENT FULL permissions..."
 
-Write-Host "  Setting allowBrowser=true..." -ForegroundColor Gray
-$null = & npx openclaw config set agents.defaults.permissions.allowBrowser true 2>&1 | Out-String
-
-Write-Host "  Setting allowReadFiles=true..." -ForegroundColor Gray
-$null = & npx openclaw config set agents.defaults.permissions.allowReadFiles true 2>&1 | Out-String
-
-Write-Host "  Setting allowWriteFiles=true..." -ForegroundColor Gray
-$null = & npx openclaw config set agents.defaults.permissions.allowWriteFiles true 2>&1 | Out-String
-
-Write-Host "  Setting allowExecute=true..." -ForegroundColor Gray
-$null = & npx openclaw config set agents.defaults.permissions.allowExecute true 2>&1 | Out-String
-
-Write-Host "  Setting allowTerminal=true..." -ForegroundColor Gray
-$null = & npx openclaw config set agents.defaults.permissions.allowTerminal true 2>&1 | Out-String
-
-Write-Host "  Setting maxConcurrentTools=10..." -ForegroundColor Gray
-$null = & npx openclaw config set agents.defaults.permissions.maxConcurrentTools 10 2>&1 | Out-String
-
-Write-Host "  Setting security.requireApproval=false..." -ForegroundColor Gray
-$null = & npx openclaw config set security.requireApproval false 2>&1 | Out-String
+Set-OpenClawConfig -Key "agents.defaults.permissions.allowBrowser" -Value "true"
+Set-OpenClawConfig -Key "agents.defaults.permissions.allowReadFiles" -Value "true"
+Set-OpenClawConfig -Key "agents.defaults.permissions.allowWriteFiles" -Value "true"
+Set-OpenClawConfig -Key "agents.defaults.permissions.allowExecute" -Value "true"
+Set-OpenClawConfig -Key "agents.defaults.permissions.allowTerminal" -Value "true"
+Set-OpenClawConfig -Key "agents.defaults.permissions.maxConcurrentTools" -Value "10"
+Set-OpenClawConfig -Key "security.requireApproval" -Value "false"
 
 Write-Host "  Setting channel group policies to open..." -ForegroundColor Gray
-$null = & npx openclaw config set channels.whatsapp.groupPolicy open 2>&1 | Out-String
-$null = & npx openclaw config set channels.telegram.groupPolicy open 2>&1 | Out-String
-$null = & npx openclaw config set channels.discord.groupPolicy open 2>&1 | Out-String
+Set-OpenClawConfig -Key "channels.whatsapp.groupPolicy" -Value "open"
+Set-OpenClawConfig -Key "channels.telegram.groupPolicy" -Value "open"
+Set-OpenClawConfig -Key "channels.discord.groupPolicy" -Value "open"
 
 Write-Success "Agent FULL permissions configured!"
 
