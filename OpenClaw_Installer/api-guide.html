@@ -700,6 +700,7 @@
                 <a href="#" class="logo">OpenClaw AI</a>
                 <ul class="nav-links">
                     <li><a href="#platforms">平台</a></li>
+                    <li><a href="#feishu">飞书</a></li>
                     <li><a href="#models">模型</a></li>
                     <li><a href="#config">配置</a></li>
                     <li><a href="#promo">邀请</a></li>
@@ -781,6 +782,229 @@ npx openclaw config set providers.siliconflow.baseURL "https://api.siliconflow.c
 npx openclaw config set providers.siliconflow.model "deepseek-ai/DeepSeek-V2-Chat"</code></pre>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <section class="section" id="feishu">
+                <div class="section-header">
+                    <h2><i class="fas fa-comments"></i> 飞书配置指南</h2>
+                    <p>将 OpenClaw 接入飞书，打造专属 AI 助手</p>
+                </div>
+                
+                <div class="platform-card" style="margin-bottom: 30px;">
+                    <div class="header">
+                        <div class="icon" style="background: linear-gradient(135deg, #3370ff, #5e8cff);">FEI</div>
+                        <h3>飞书 / Lark</h3>
+                    </div>
+                    <a href="https://open.feishu.cn/app" target="_blank" class="url">https://open.feishu.cn/app</a>
+                    <ul class="features">
+                        <li>企业级即时通讯平台</li>
+                        <li>支持机器人对话</li>
+                        <li>支持群聊和私聊</li>
+                        <li>支持代码块导入和执行</li>
+                        <li>免费使用</li>
+                    </ul>
+                </div>
+                
+                <h3 style="margin: 30px 0 20px; color: var(--text-primary);">步骤一：创建飞书应用</h3>
+                <ol style="color: var(--text-secondary); line-height: 2; padding-left: 20px;">
+                    <li>访问 <a href="https://open.feishu.cn/app" target="_blank" style="color: var(--primary);">飞书开放平台</a> 并登录</li>
+                    <li>点击「创建应用」→ 选择「企业自建应用」</li>
+                    <li>填写应用名称（如：AI助手）和描述</li>
+                    <li>进入应用 → 左侧菜单「凭证管理」→ 复制 <strong>App ID</strong> 和 <strong>App Secret</strong></li>
+                </ol>
+                
+                <h3 style="margin: 30px 0 20px; color: var(--text-primary);">步骤二：配置机器人权限（重要）</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">进入「权限管理」页面，搜索并开通以下权限：</p>
+                
+                <table class="data-table" style="margin: 20px 0;">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%;">权限名称</th>
+                            <th style="width: 30%;">权限ID</th>
+                            <th>用途</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>获取与发送消息</td>
+                            <td><code>im:message</code></td>
+                            <td>基础消息收发</td>
+                        </tr>
+                        <tr>
+                            <td>获取群组信息</td>
+                            <td><code>im:chat</code></td>
+                            <td>群聊功能支持</td>
+                        </tr>
+                        <tr>
+                            <td>以应用身份读取群消息</td>
+                            <td><code>im:chat:readonly_as_app</code></td>
+                            <td>读取群聊消息</td>
+                        </tr>
+                        <tr>
+                            <td>接收群聊消息</td>
+                            <td><code>im:message.group_msg</code></td>
+                            <td>接收群消息事件</td>
+                        </tr>
+                        <tr>
+                            <td>以应用身份发消息</td>
+                            <td><code>im:message:send_as_bot</code></td>
+                            <td>机器人发送消息</td>
+                        </tr>
+                        <tr>
+                            <td>上传文件到云文档</td>
+                            <td><code>drive:file:upload</code></td>
+                            <td>上传代码文件</td>
+                        </tr>
+                        <tr>
+                            <td>下载云文档文件</td>
+                            <td><code>drive:file:download</code></td>
+                            <td>下载代码文件</td>
+                        </tr>
+                        <tr>
+                            <td>查看云文档</td>
+                            <td><code>docs:doc:readonly</code></td>
+                            <td>读取文档内容</td>
+                        </tr>
+                        <tr>
+                            <td>编辑云文档</td>
+                            <td><code>docs:doc</code></td>
+                            <td>编辑文档/代码</td>
+                        </tr>
+                        <tr>
+                            <td>获取用户信息</td>
+                            <td><code>contact:user.base:readonly</code></td>
+                            <td>获取用户基本信息</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="info-banner" style="margin: 20px 0;">
+                    <h3><i class="fas fa-lightbulb"></i> 权限配置提示</h3>
+                    <p>权限配置完成后，需要发布新版本才能生效。建议一次性配置所有权限后再发布。</p>
+                </div>
+                
+                <h3 style="margin: 30px 0 20px; color: var(--text-primary);">步骤三：配置事件订阅（重要）</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">进入「事件订阅」页面，添加以下事件：</p>
+                
+                <table class="data-table" style="margin: 20px 0;">
+                    <thead>
+                        <tr>
+                            <th style="width: 50%;">事件名称</th>
+                            <th>事件类型</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>接收消息</td>
+                            <td><code>im.message.receive_v1</code></td>
+                        </tr>
+                        <tr>
+                            <td>群组被创建</td>
+                            <td><code>im.chat.created_v1</code></td>
+                        </tr>
+                        <tr>
+                            <td>群组信息变更</td>
+                            <td><code>im.chat.updated_v1</code></td>
+                        </tr>
+                        <tr>
+                            <td>用户进入群组</td>
+                            <td><code>im.chat.member.added_v1</code></td>
+                        </tr>
+                        <tr>
+                            <td>文件创建</td>
+                            <td><code>drive.file.created_v1</code></td>
+                        </tr>
+                        <tr>
+                            <td>文件更新</td>
+                            <td><code>drive.file.updated_v1</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 style="margin: 30px 0 20px; color: var(--text-primary);">步骤四：配置机器人</h3>
+                <ol style="color: var(--text-secondary); line-height: 2; padding-left: 20px;">
+                    <li>左侧菜单「机器人」→「添加机器人」</li>
+                    <li>填写机器人名称和头像</li>
+                    <li>配置机器人描述和简介</li>
+                    <li>设置「命令」支持（可选）：
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li><code>/help</code> - 获取帮助</li>
+                            <li><code>/code</code> - 代码模式</li>
+                            <li><code>/clear</code> - 清除对话</li>
+                        </ul>
+                    </li>
+                </ol>
+                
+                <h3 style="margin: 30px 0 20px; color: var(--text-primary);">步骤五：配置 OpenClaw</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-title">安装飞书插件</span>
+                        <button class="copy-button" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <pre><code>npx openclaw configure feishu</code></pre>
+                </div>
+                
+                <p style="color: var(--text-secondary); margin: 20px 0;">按照提示输入：</p>
+                <ol style="color: var(--text-secondary); line-height: 2; padding-left: 20px;">
+                    <li><strong>Select channel</strong> → 选择 <code>feishu/lark</code></li>
+                    <li><strong>Install feishu plugin?</strong> → 选择 <code>Download from npm (@openclaw/feishu)</code></li>
+                    <li><strong>App ID</strong> → 输入飞书应用的 App ID</li>
+                    <li><strong>App Secret</strong> → 输入飞书应用的 App Secret</li>
+                    <li><strong>Feishu domain</strong> → 选择 <code>feishu.cn - China</code></li>
+                    <li><strong>Group chat policy</strong> → 选择 <code>open</code></li>
+                </ol>
+                
+                <h3 style="margin: 30px 0 20px; color: var(--text-primary);">步骤六：配置长连接</h3>
+                <ol style="color: var(--text-secondary); line-height: 2; padding-left: 20px;">
+                    <li>启动 OpenClaw Gateway：<code>npx openclaw gateway</code></li>
+                    <li>返回飞书开放平台 → 左侧菜单「事件订阅」</li>
+                    <li>选择「长连接」模式（推荐）或「Webhook」模式</li>
+                    <li>长连接无需配置服务器，适合本地开发</li>
+                    <li>Webhook 需要配置公网可访问的服务器地址</li>
+                </ol>
+                
+                <h3 style="margin: 30px 0 20px; color: var(--text-primary);">步骤七：发布应用</h3>
+                <ol style="color: var(--text-secondary); line-height: 2; padding-left: 20px;">
+                    <li>左侧菜单「版本管理与发布」→「创建版本」</li>
+                    <li>填写版本号（如：1.0.0）和版本说明</li>
+                    <li>点击「申请发布」</li>
+                    <li>企业自建应用通常免审核，直接发布</li>
+                    <li>发布后，在飞书中搜索机器人名称即可使用</li>
+                </ol>
+                
+                <h3 style="margin: 30px 0 20px; color: var(--text-primary);">步骤八：用户绑定</h3>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-title">批准用户绑定</span>
+                        <button class="copy-button" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <pre><code>npx openclaw pairing approve feishu XXXXXX</code></pre>
+                </div>
+                <p style="color: var(--text-secondary); margin: 20px 0;">用户首次在飞书中给机器人发消息时，会收到绑定码提示。管理员需要在命令行执行上述命令完成绑定。</p>
+                
+                <h3 style="margin: 30px 0 20px; color: var(--text-primary);">代码导入功能</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">OpenClaw 支持从飞书云文档导入代码文件：</p>
+                <ul style="color: var(--text-secondary); line-height: 2; padding-left: 20px;">
+                    <li>支持格式：.py, .js, .ts, .java, .go, .rs, .cpp, .c, .h 等</li>
+                    <li>在飞书中上传代码文件到云文档</li>
+                    <li>分享文件链接给机器人</li>
+                    <li>机器人可读取并分析代码内容</li>
+                </ul>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-title">配置代码导入权限</span>
+                        <button class="copy-button" onclick="copyCode(this)">复制</button>
+                    </div>
+                    <pre><code>npx openclaw config set plugins.feishu.codeImport true
+npx openclaw config set agents.defaults.permissions.allowReadFiles true
+npx openclaw config set agents.defaults.permissions.allowWriteFiles true</code></pre>
+                </div>
+                
+                <div class="info-banner" style="margin-top: 30px;">
+                    <h3><i class="fas fa-lightbulb"></i> 提示</h3>
+                    <p>OpenClaw 2026.2.6 及以上版本已内置飞书插件，安装时可选择 "Skip for now" 跳过下载。代码导入功能需要开通云文档相关权限。</p>
                 </div>
             </section>
 
@@ -970,6 +1194,7 @@ npx openclaw config set agents.defaults.maxTokens 8192</code></pre>
                 </p>
                 <ul class="footer-links">
                     <li><a href="https://docs.openclaw.ai/" target="_blank">官方文档</a></li>
+                    <li><a href="https://open.feishu.cn/app" target="_blank">飞书开放平台</a></li>
                     <li><a href="https://siliconflow.cn" target="_blank">硅基流动</a></li>
                     <li><a href="https://dashscope.aliyuncs.com/" target="_blank">阿里云百炼</a></li>
                 </ul>
