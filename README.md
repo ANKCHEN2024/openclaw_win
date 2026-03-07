@@ -1,5 +1,9 @@
 # OpenClaw Windows Installer
 
+[![Release](https://img.shields.io/github/v/release/ANKCHEN2024/openclaw_win?include_prereleases)](https://github.com/ANKCHEN2024/openclaw_win/releases)
+[![License](https://img.shields.io/github/license/ANKCHEN2024/openclaw_win)](LICENSE)
+[![OpenClaw](https://img.shields.io/badge/OpenClaw-2026.3.2-green)](https://docs.openclaw.ai/)
+
 OpenClaw AI Gateway Windows 自动部署安装程序
 
 ## 简介
@@ -24,40 +28,42 @@ OpenClaw 是一个自托管的 AI Gateway，可以将 WhatsApp、Telegram、Disc
 
 ### 方式一：下载安装包（推荐）
 
-1. 从 [Releases](../../releases) 页面下载最新的 `OpenClaw_Setup_v*.exe`
-2. 双击运行安装程序
-3. 按照安装向导完成安装
-4. 安装完成后会自动打开控制面板
+1. 前往 [Releases](https://github.com/ANKCHEN2024/openclaw_win/releases) 页面
+2. 下载最新版本的 `OpenClaw_Setup_v*.exe`
+3. 双击运行安装程序
+4. 按照安装向导完成安装
+5. 安装完成后会自动打开控制面板
 
 ### 方式二：从源码构建
 
 ```bash
 # 克隆仓库
-git clone https://github.com/YOUR_USERNAME/openclaw-win.git
-cd openclaw-win
+git clone https://github.com/ANKCHEN2024/openclaw_win.git
+cd openclaw_win
 
-# 下载依赖
-cd OpenClaw_Installer/redist
-# 下载 Node.js 22.x MSI: https://nodejs.org/
+# 下载依赖到 redist 目录
+# Node.js 22.x MSI: https://nodejs.org/en/download/
 
 # 编译安装程序（需要 Inno Setup 6）
 # 打开 OpenClaw_Installer/scripts/OpenClaw_Setup.iss 编译
 ```
 
+## 下载链接
+
+| 文件 | 说明 | 下载地址 |
+|------|------|----------|
+| OpenClaw_Setup_v*.exe | 完整安装包 | [Releases](https://github.com/ANKCHEN2024/openclaw_win/releases) |
+| Node.js 22.x MSI | Node.js 安装包 | [nodejs.org](https://nodejs.org/en/download/) |
+
 ## 项目结构
 
 ```
-openclaw-win/
+openclaw_win/
 ├── OpenClaw_Installer/
 │   ├── bin/                 # 可执行文件
 │   ├── docs/                # 文档
 │   ├── redist/              # 依赖包（需下载）
-│   │   ├── node-v22.x-x64.msi
-│   │   └── ...
 │   ├── scripts/             # 安装脚本
-│   │   ├── OpenClaw_Setup.iss
-│   │   ├── install.ps1
-│   │   └── ...
 │   ├── output/              # 输出目录
 │   └── api-guide.html       # API 接入指南
 ├── .gitignore
@@ -69,8 +75,8 @@ openclaw-win/
 
 安装完成后，程序会提示打开 API 接入指南，包含：
 
-- **阿里云百炼** - Qwen 系列模型配置
-- **硅基流动** - DeepSeek、Qwen 等模型配置
+- **阿里云百炼** - Qwen 系列模型配置（新用户 100 万 tokens 免费额度）
+- **硅基流动** - DeepSeek、Qwen 等模型配置（注册送约 2000 万 tokens）
 - **模型推荐** - 高性价比模型推荐
 - **费用参考** - 各平台免费额度和定价
 
@@ -94,8 +100,11 @@ npx openclaw gateway
 # 查看配置
 npx openclaw config list
 
-# 设置 API Key
+# 设置 API Key (硅基流动)
 npx openclaw config set providers.siliconflow.apiKey "your-api-key"
+
+# 设置 API Key (阿里云百炼)
+npx openclaw config set providers.dashscope.apiKey "your-api-key"
 
 # 切换模型
 npx openclaw config set agents.defaults.model "siliconflow"
@@ -109,7 +118,7 @@ npx openclaw config set agents.defaults.model "siliconflow"
 
 ## 许可证
 
-MIT License
+[MIT License](LICENSE)
 
 ## 贡献
 
