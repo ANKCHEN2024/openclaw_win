@@ -1,10 +1,11 @@
 ; OpenClaw Installer Script for Inno Setup
 ; Generates single exe installer with Chinese UI and accurate progress
+; Version: 2026.3.2 - With Token Authentication
 
 #define MyAppName "OpenClaw"
 #define MyAppVersion "2026.3.2"
 #define MyAppPublisher "OpenClaw Team"
-#define MyAppURL "https://github.com/openclaw/openclaw"
+#define MyAppURL "https://github.com/ANKCHEN2024/openclaw_win"
 #define MyAppExeName "OpenClaw.exe"
 
 [Setup]
@@ -65,11 +66,7 @@ Filename: "cmd.exe"; Parameters: "/c if exist ""{app}\start_minimized.bat"" scht
 [Code]
 var
   ResultCode: Integer;
-
-function InitializeSetup(): Boolean;
-begin
-  Result := True;
-end;
+  GeneratedToken: String;
 
 procedure CurStepChanged(CurStep: TSetupStep);
 var
@@ -78,10 +75,13 @@ var
   StartScript: String;
   StartMinimizedScript: String;
   InstallBatch: String;
-  StatusText: String;
+  TokenFilePath: String;
+  TokenFileContent: String;
 begin
   if CurStep = ssPostInstall then
   begin
+    GeneratedToken := 'oc_' + GetMD5OfString(ExpandConstant('{app}') + ExpandConstant('{username}'));
+    
     ForceDirectories(ExpandConstant('{app}'));
     ForceDirectories(ExpandConstant('{app}\config'));
     ForceDirectories(ExpandConstant('{app}\logs'));
@@ -102,16 +102,14 @@ begin
       'echo Configuring...' + #13#10 +
       'npx openclaw doctor --fix' + #13#10 +
       'npx openclaw config set gateway.mode local' + #13#10 +
-      'npx openclaw config set gateway.auth.mode none' + #13#10 +
+      'npx openclaw config set gateway.auth.mode token' + #13#10 +
+      'npx openclaw config set gateway.auth.token "' + GeneratedToken + '"' + #13#10 +
       'npx openclaw config set agents.defaults.permissions.allowBrowser true' + #13#10 +
       'npx openclaw config set agents.defaults.permissions.allowReadFiles true' + #13#10 +
       'npx openclaw config set agents.defaults.permissions.allowWriteFiles true' + #13#10 +
       'npx openclaw config set agents.defaults.permissions.allowExecute true' + #13#10 +
       'npx openclaw config set agents.defaults.permissions.allowTerminal true' + #13#10 +
       'npx openclaw config set security.requireApproval false' + #13#10 +
-      'npx openclaw config set channels.whatsapp.groupPolicy open' + #13#10 +
-      'npx openclaw config set channels.telegram.groupPolicy open' + #13#10 +
-      'npx openclaw config set channels.discord.groupPolicy open' + #13#10 +
       'echo Done.';
 
     SaveStringToFile(ExpandConstant('{app}\install_steps.bat'), InstallBatch, False);
@@ -125,7 +123,13 @@ begin
       '    "discord": {"enabled": false, "groupPolicy": "open"},' + #13#10 +
       '    "imessage": {"enabled": false, "groupPolicy": "open"}' + #13#10 +
       '  },' + #13#10 +
-      '  "gateway": {"mode": "local", "auth": {"mode": "none"}},' + #13#10 +
+      '  "gateway": {' + #13#10 +
+      '    "mode": "local",' + #13#10 +
+      '    "auth": {' + #13#10 +
+      '      "mode": "token",' + #13#10 +
+      '      "token": "' + GeneratedToken + '"' + #13#10 +
+      '    }' + #13#10 +
+      '  },' + #13#10 +
       '  "agents": {"defaults": {"permissions": {' + #13#10 +
       '    "allowBrowser": true,' + #13#10 +
       '    "allowReadFiles": true,' + #13#10 +
@@ -141,17 +145,29 @@ begin
 
     SaveStringToFile(ConfigPath, ConfigContent, False);
 
+    TokenFilePath := ExpandConstant('{app}\token.txt');
+    TokenFileContent := 'OpenClaw Gateway Token' + #13#10 + #13#10 +
+      'Your authentication token:' + #13#10 +
+      GeneratedToken + #13#10 + #13#10 +
+      'Control Panel URL:' + #13#10 +
+      'http://127.0.0.1:18789/?token=' + GeneratedToken + #13#10 + #13#10 +
+      'IMPORTANT: Keep this token secure!' + #13#10 +
+      'Anyone with this token can access your Gateway.';
+    SaveStringToFile(TokenFilePath, TokenFileContent, False);
+
     Exec('cmd.exe', '/c start /min npx openclaw gateway', '', SW_HIDE, ewNoWait, ResultCode);
     Sleep(3000);
-    Exec('cmd.exe', '/c start http://127.0.0.1:18789/', '', SW_HIDE, ewNoWait, ResultCode);
+    Exec('cmd.exe', '/c start http://127.0.0.1:18789/?token=' + GeneratedToken, '', SW_HIDE, ewNoWait, ResultCode);
 
-    StatusText := 'OpenClaw Gateway started!' + #13#10 + 'Please check if browser opened automatically.';
     MsgBox('OpenClaw Installation Complete!' + #13#10 + #13#10 +
-           'Agent permissions set to FULL' + #13#10 +
-           'Token authentication disabled' + #13#10 + #13#10 +
-           StatusText + #13#10 + #13#10 +
+           'Token Authentication: ENABLED' + #13#10 +
+           'Agent permissions: FULL' + #13#10 + #13#10 +
+           'Your Token has been:' + #13#10 +
+           '- Saved to config file' + #13#10 +
+           '- Saved to: ' + ExpandConstant('{app}\token.txt') + #13#10 +
+           '- Auto-injected in browser URL' + #13#10 + #13#10 +
            'Control Panel: http://127.0.0.1:18789/' + #13#10 + #13#10 +
-           'Start command: npx openclaw gateway',
+           'Keep your token secure!',
            mbInformation, MB_OK);
     if MsgBox('Open API Guide?' + #13#10 + #13#10 +
               'Guide: Aliyun Bailian, SiliconFlow config, Model recommendations',

@@ -15,7 +15,8 @@ OpenClaw 是一个自托管的 AI Gateway，可以将 WhatsApp、Telegram、Disc
 - **一键安装** - 自动安装 Node.js 22 和 OpenClaw
 - **离线部署** - 所有依赖预下载，支持离线安装
 - **中文界面** - 完整的中文安装向导
-- **自动配置** - Agent FULL 权限、禁用 Token 认证
+- **自动配置** - Agent FULL 权限、Token 认证自动生成
+- **安全认证** - 每次安装自动生成唯一 Token，浏览器自动带入
 - **开机自启** - 可选的开机自动启动功能
 - **API 接入指南** - 内置阿里云百炼、硅基流动配置指南
 
@@ -32,7 +33,7 @@ OpenClaw 是一个自托管的 AI Gateway，可以将 WhatsApp、Telegram、Disc
 2. 下载最新版本的 `OpenClaw_Setup_v*.exe`
 3. 双击运行安装程序
 4. 按照安装向导完成安装
-5. 安装完成后会自动打开控制面板
+5. 安装完成后会自动打开控制面板（Token 已自动注入）
 
 ### 方式二：从源码构建
 
@@ -87,9 +88,17 @@ openclaw_win/
 | 配置项 | 值 |
 |--------|-----|
 | Agent 权限 | FULL (完全权限) |
-| Token 认证 | 已禁用 |
+| Token 认证 | **已启用**（自动生成唯一 Token） |
 | 控制面板 | http://127.0.0.1:18789/ |
 | 配置文件 | `%APPDATA%\.openclaw\openclaw.json` |
+| Token 文件 | `{安装目录}\token.txt` |
+
+### Token 安全说明
+
+- 每次安装会自动生成唯一的 Token
+- Token 保存在 `{安装目录}\token.txt` 文件中
+- 浏览器打开时会自动带入 Token 参数
+- **请妥善保管 Token，不要泄露给他人**
 
 ## 常用命令
 
@@ -108,13 +117,17 @@ npx openclaw config set providers.dashscope.apiKey "your-api-key"
 
 # 切换模型
 npx openclaw config set agents.defaults.model "siliconflow"
+
+# 查看/修改 Token
+npx openclaw config get gateway.auth.token
+npx openclaw config set gateway.auth.token "new-token"
 ```
 
 ## 相关链接
 
 - [OpenClaw 官方文档](https://docs.openclaw.ai/)
 - [阿里云百炼](https://dashscope.aliyuncs.com/)
-- [硅基流动](https://siliconflow.cn)
+- [硅基流动](https://cloud.siliconflow.cn/i/XT034RLE)
 
 ## 许可证
 
