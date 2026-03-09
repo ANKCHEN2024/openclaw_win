@@ -99,9 +99,9 @@ Set-Location $InstallPath
 
 $installSuccess = $false
 
-# Try global install
-Write-Host "  Trying global install..." -ForegroundColor Gray
-$null = & npm install -g openclaw 2>&1 | Out-String
+# Try global install with latest version
+Write-Host "  Trying global install with latest version..." -ForegroundColor Gray
+$null = & npm install -g openclaw@latest 2>&1 | Out-String
 if ($LASTEXITCODE -eq 0) {
     $installSuccess = $true
     Write-Success "Global install OK"
@@ -111,7 +111,7 @@ if ($LASTEXITCODE -eq 0) {
 if (-not $installSuccess) {
     Write-Host "  Trying local install..." -ForegroundColor Gray
     $null = & npm init -y 2>&1 | Out-String
-    $null = & npm install openclaw 2>&1 | Out-String
+    $null = & npm install openclaw@latest 2>&1 | Out-String
     if ($LASTEXITCODE -eq 0) {
         $installSuccess = $true
         Write-Success "Local install OK"
@@ -223,7 +223,7 @@ Write-Step "Registering uninstall..."
 $uninstallKey = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\OpenClaw"
 New-Item -Path $uninstallKey -Force | Out-Null
 Set-ItemProperty -Path $uninstallKey -Name "DisplayName" -Value "OpenClaw" -ErrorAction SilentlyContinue
-Set-ItemProperty -Path $uninstallKey -Name "DisplayVersion" -Value "2026.3.2" -ErrorAction SilentlyContinue
+Set-ItemProperty -Path $uninstallKey -Name "DisplayVersion" -Value "2026.3.8" -ErrorAction SilentlyContinue
 Set-ItemProperty -Path $uninstallKey -Name "Publisher" -Value "OpenClaw Team" -ErrorAction SilentlyContinue
 Set-ItemProperty -Path $uninstallKey -Name "InstallLocation" -Value $InstallPath -ErrorAction SilentlyContinue
 

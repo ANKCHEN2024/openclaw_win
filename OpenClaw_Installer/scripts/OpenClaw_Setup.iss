@@ -1,9 +1,9 @@
 ; OpenClaw Installer Script for Inno Setup
 ; Generates single exe installer with Chinese UI and accurate progress
-; Version: 2026.3.2 - With Token Authentication
+; Version: 2026.3.8 - With Token Authentication
 
 #define MyAppName "OpenClaw"
-#define MyAppVersion "2026.3.2"
+#define MyAppVersion "2026.3.8"
 #define MyAppPublisher "OpenClaw Team"
 #define MyAppURL "https://github.com/ANKCHEN2024/openclaw_win"
 #define MyAppExeName "OpenClaw.exe"
@@ -97,13 +97,12 @@ begin
     InstallBatch := 
       '@echo off' + #13#10 +
       'echo Installing OpenClaw...' + #13#10 +
-      'npm install -g openclaw' + #13#10 +
+      'npm install -g openclaw@latest' + #13#10 +
       'echo.' + #13#10 +
       'echo Configuring...' + #13#10 +
       'npx openclaw doctor --fix' + #13#10 +
       'npx openclaw config set gateway.mode local' + #13#10 +
-      'npx openclaw config set gateway.auth.mode token' + #13#10 +
-      'npx openclaw config set gateway.auth.token "' + GeneratedToken + '"' + #13#10 +
+      'npx openclaw config set gateway.auth.mode none' + #13#10 +
       'npx openclaw config set agents.defaults.permissions.allowBrowser true' + #13#10 +
       'npx openclaw config set agents.defaults.permissions.allowReadFiles true' + #13#10 +
       'npx openclaw config set agents.defaults.permissions.allowWriteFiles true' + #13#10 +
@@ -126,8 +125,7 @@ begin
       '  "gateway": {' + #13#10 +
       '    "mode": "local",' + #13#10 +
       '    "auth": {' + #13#10 +
-      '      "mode": "token",' + #13#10 +
-      '      "token": "' + GeneratedToken + '"' + #13#10 +
+      '      "mode": "none"' + #13#10 +
       '    }' + #13#10 +
       '  },' + #13#10 +
       '  "agents": {"defaults": {"permissions": {' + #13#10 +
@@ -157,17 +155,13 @@ begin
 
     Exec('cmd.exe', '/c start /min npx openclaw gateway', '', SW_HIDE, ewNoWait, ResultCode);
     Sleep(3000);
-    Exec('cmd.exe', '/c start http://127.0.0.1:18789/?token=' + GeneratedToken, '', SW_HIDE, ewNoWait, ResultCode);
+    Exec('cmd.exe', '/c start http://127.0.0.1:18789/', '', SW_HIDE, ewNoWait, ResultCode);
 
     MsgBox('OpenClaw 安装完成！' + #13#10 + #13#10 +
-           '令牌认证：已启用' + #13#10 +
+           '令牌认证：已禁用' + #13#10 +
            '智能体权限：完全权限' + #13#10 + #13#10 +
-           '您的令牌已：' + #13#10 +
-           '- 保存到配置文件' + #13#10 +
-           '- 保存到：' + ExpandConstant('{app}\token.txt') + #13#10 +
-           '- 自动注入浏览器地址' + #13#10 + #13#10 +
            '控制面板：http://127.0.0.1:18789/' + #13#10 + #13#10 +
-           '请妥善保管您的令牌！',
+           '安装路径：' + ExpandConstant('{app}'),
            mbInformation, MB_OK);
     if MsgBox('是否打开接入指南？' + #13#10 + #13#10 +
               '指南包含：阿里云百炼、硅基流动配置、模型推荐',
