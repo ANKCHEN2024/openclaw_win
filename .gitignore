@@ -1,11 +1,7 @@
-# OpenClaw Windows Installer
-
-## Output files - exclude from git
-OpenClaw_Installer/output/
+# OpenClaw Windows Deployment Guide
 
 ## Dependencies - large files, download separately
 OpenClaw_Installer/redist/*.msi
-OpenClaw_Installer/redist/*.exe
 OpenClaw_Installer/redist/*.tgz
 
 ## IDE and editor files
@@ -31,7 +27,3 @@ Thumbs.db
 *.tmp
 *.temp
 *.log
-
-## Build artifacts
-*.exe
-!OpenClaw_Installer/output/OpenClaw_Setup_*.exe
