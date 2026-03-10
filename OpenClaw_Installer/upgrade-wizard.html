@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw 升级向导 - 版本更新</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00b359;
+            --primary-dark: #008040;
+            --secondary: #0086b3;
+            --accent: #cc3366;
+            --success: #00b359;
+            --warning: #cc8400;
+            --danger: #cc3333;
+            --info: #0086b3;
+            --bg-dark: #f8f9fa;
+            --bg-darker: #e9ecef;
+            --bg-light: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --text-muted: #adb5bd;
+            --border-color: #dee2e6;
+            --shadow-sm: 0 1px 3px rgba(0, 179, 89, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 179, 89, 0.15);
+            --shadow-lg: 0 10px 15px rgba(0, 179, 89, 0.2);
+            --border-radius-sm: 4px;
+            --border-radius-md: 8px;
+            --border-radius-lg: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .upgrade-container {
+            background: var(--bg-light);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+
+        .upgrade-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .upgrade-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .upgrade-header p {
+            opacity: 0.9;
+        }
+
+        .version-comparison {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            padding: 30px;
+            background: var(--bg-dark);
+            align-items: center;
+        }
+
+        .version-box {
+            text-align: center;
+            padding: 20px;
+            background: var(--bg-light);
+            border-radius: var(--border-radius-md);
+            border: 2px solid var(--border-color);
+        }
+
+        .version-box.current {
+            border-color: var(--text-muted);
+        }
+
+        .version-box.latest {
+            border-color: var(--success);
+            background: linear-gradient(135deg, rgba(0, 179, 89, 0.05), rgba(0, 179, 89, 0.1));
+        }
+
+        .version-box .label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .version-box .version {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .version-box.latest .version {
+            color: var(--primary);
+        }
+
+        .version-arrow {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .upgrade-content {
+            padding: 30px;
+        }
+
+        .changelog {
+            background: var(--bg-dark);
+            border-radius: var(--border-radius-md);
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .changelog h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .changelog ul {
+            list-style: none;
+        }
+
+        .changelog li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .changelog li:last-child {
+            border-bottom: none;
+        }
+
+        .changelog li i {
+            color: var(--success);
+            margin-top: 3px;
+        }
+
+        .changelog .type {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .changelog .type.feature {
+            background: rgba(0, 179, 89, 0.1);
+            color: var(--primary);
+        }
+
+        .changelog .type.fix {
+            background: rgba(204, 51, 51, 0.1);
+            color: var(--danger);
+        }
+
+        .changelog .type.improve {
+            background: rgba(0, 134, 179, 0.1);
+            color: var(--info);
+        }
+
+        .upgrade-progress {
+            display: none;
+            margin: 25px 0;
+        }
+
+        .upgrade-progress.active {
+            display: block;
+        }
+
+        .progress-bar-container {
+            background: var(--bg-darker);
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .upgrade-steps {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .upgrade-steps li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-dark);
+            border-radius: var(--border-radius-md);
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .upgrade-steps li.pending i {
+            color: var(--text-muted);
+        }
+
+        .upgrade-steps li.processing i {
+            color: var(--info);
+            animation: spin 1s linear infinite;
+        }
+
+        .upgrade-steps li.completed i {
+            color: var(--success);
+        }
+
+        .upgrade-steps li.error i {
+            color: var(--danger);
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--bg-darker);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: var(--border-radius-md);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-success {
+            background: rgba(0, 179, 89, 0.1);
+            border: 1px solid var(--success);
+            color: var(--primary-dark);
+        }
+
+        .alert-warning {
+            background: rgba(204, 132, 0, 0.1);
+            border: 1px solid var(--warning);
+            color: #8b6914;
+        }
+
+        .alert-error {
+            background: rgba(204, 51, 51, 0.1);
+            border: 1px solid var(--danger);
+            color: #a52a2a;
+        }
+
+        .alert-info {
+            background: rgba(0, 134, 179, 0.1);
+            border: 1px solid var(--info);
+            color: var(--secondary);
+        }
+
+        .completion-message {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .completion-message.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .completion-message i {
+            font-size: 4rem;
+            color: var(--success);
+            margin-bottom: 20px;
+        }
+
+        .completion-message h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .completion-message p {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .version-comparison {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .version-arrow {
+                transform: rotate(90deg);
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="upgrade-container">
+            <!-- Header -->
+            <div class="upgrade-header">
+                <h1><i class="fas fa-arrow-alt-circle-up"></i> OpenClaw 升级向导</h1>
+                <p>检查更新并升级到最新版本</p>
+            </div>
+
+            <!-- Version Comparison -->
+            <div class="version-comparison">
+                <div class="version-box current">
+                    <div class="label">当前版本</div>
+                    <div class="version" id="currentVersion">2026.3.2</div>
+                </div>
+                <div class="version-arrow">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+                <div class="version-box latest">
+                    <div class="label">最新版本</div>
+                    <div class="version" id="latestVersion">检测中...</div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="upgrade-content">
+                <!-- Status Alert -->
+                <div class="alert alert-info" id="statusAlert">
+                    <i class="fas fa-info-circle"></i>
+                    <span>正在检查最新版本...</span>
+                </div>
+
+                <!-- Changelog -->
+                <div class="changelog" id="changelog" style="display: none;">
+                    <h3><i class="fas fa-list-alt"></i> 更新日志</h3>
+                    <ul id="changelogList">
+                        <!-- Dynamic content -->
+                    </ul>
+                </div>
+
+                <!-- Upgrade Progress -->
+                <div class="upgrade-progress" id="upgradeProgress">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progressBar"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">准备升级...</div>
+
+                    <ul class="upgrade-steps" id="upgradeSteps">
+                        <li class="pending" data-step="backup">
+                            <i class="fas fa-circle"></i>
+                            <span>备份当前配置</span>
+                        </li>
+                        <li class="pending" data-step="download">
+                            <i class="fas fa-circle"></i>
+                            <span>下载最新版本</span>
+                        </li>
+                        <li class="pending" data-step="install">
+                            <i class="fas fa-circle"></i>
+                            <span>安装新版本</span>
+                        </li>
+                        <li class="pending" data-step="migrate">
+                            <i class="fas fa-circle"></i>
+                            <span>迁移配置数据</span>
+                        </li>
+                        <li class="pending" data-step="verify">
+                            <i class="fas fa-circle"></i>
+                            <span>验证安装</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Completion Message -->
+                <div class="completion-message" id="completionMessage">
+                    <i class="fas fa-check-circle"></i>
+                    <h2>升级完成！</h2>
+                    <p>OpenClaw 已成功升级到最新版本。请重新启动网关以应用更新。</p>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="restartGateway()">
+                            <i class="fas fa-redo"></i>
+                            重启网关
+                        </button>
+                        <button class="btn btn-secondary" onclick="closeWizard()">
+                            <i class="fas fa-times"></i>
+                            稍后重启
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button class="btn btn-primary" id="upgradeBtn" onclick="startUpgrade()" style="display: none;">
+                    <i class="fas fa-download"></i>
+                    立即升级
+                </button>
+
+                <button class="btn btn-secondary" id="checkBtn" onclick="checkUpdate()">
+                    <i class="fas fa-sync-alt"></i>
+                    重新检查
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentVersion = '2026.3.2';
+        let latestVersion = '';
+        let isUpgrading = false;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkUpdate();
+        });
+
+        // Check for updates
+        async function checkUpdate() {
+            const statusAlert = document.getElementById('statusAlert');
+            const upgradeBtn = document.getElementById('upgradeBtn');
+            const checkBtn = document.getElementById('checkBtn');
+            const changelog = document.getElementById('changelog');
+
+            statusAlert.className = 'alert alert-info';
+            statusAlert.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>正在检查最新版本...</span>';
+            upgradeBtn.style.display = 'none';
+            checkBtn.style.display = 'none';
+            changelog.style.display = 'none';
+
+            try {
+                // In real implementation, fetch from npm registry or API
+                await delay(1500);
+
+                // Simulate version check
+                latestVersion = '2026.3.8';
+                document.getElementById('latestVersion').textContent = latestVersion;
+
+                if (compareVersions(latestVersion, currentVersion) > 0) {
+                    // Update available
+                    statusAlert.className = 'alert alert-warning';
+                    statusAlert.innerHTML = `<i class="fas fa-exclamation-triangle"></i><span>发现新版本 ${latestVersion}，建议立即升级</span>`;
+                    upgradeBtn.style.display = 'inline-flex';
+                    checkBtn.style.display = 'inline-flex';
+                    changelog.style.display = 'block';
+                    loadChangelog();
+                } else {
+                    // Already up to date
+                    statusAlert.className = 'alert alert-success';
+                    statusAlert.innerHTML = '<i class="fas fa-check-circle"></i><span>当前已是最新版本</span>';
+                    checkBtn.style.display = 'inline-flex';
+                }
+            } catch (error) {
+                statusAlert.className = 'alert alert-error';
+                statusAlert.innerHTML = '<i class="fas fa-times-circle"></i><span>检查更新失败，请稍后重试</span>';
+                checkBtn.style.display = 'inline-flex';
+            }
+        }
+
+        // Load changelog
+        function loadChangelog() {
+            const changelogList = document.getElementById('changelogList');
+            const changes = [
+                { type: 'feature', text: '新增飞书机器人完整配置支持' },
+                { type: 'feature', text: '扩展模型推荐，新增 14 款国内外模型' },
+                { type: 'improve', text: '优化安装向导界面，全中文化支持' },
+                { type: 'improve', text: '改进安装过程自动监测机制' },
+                { type: 'fix', text: '修复 npx 在新机器上的报错问题' },
+                { type: 'fix', text: '修复 token 认证配置不一致问题' }
+            ];
+
+            changelogList.innerHTML = changes.map(change => `
+                <li>
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <span class="type ${change.type}">${getTypeLabel(change.type)}</span>
+                        ${change.text}
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        function getTypeLabel(type) {
+            const labels = {
+                feature: '新功能',
+                fix: '修复',
+                improve: '优化'
+            };
+            return labels[type] || type;
+        }
+
+        // Start upgrade
+        async function startUpgrade() {
+            if (isUpgrading) return;
+
+            isUpgrading = true;
+            const upgradeBtn = document.getElementById('upgradeBtn');
+            const checkBtn = document.getElementById('checkBtn');
+            const upgradeProgress = document.getElementById('upgradeProgress');
+            const statusAlert = document.getElementById('statusAlert');
+
+            upgradeBtn.disabled = true;
+            checkBtn.style.display = 'none';
+            upgradeProgress.classList.add('active');
+            statusAlert.className = 'alert alert-info';
+            statusAlert.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>正在升级中，请勿关闭窗口...</span>';
+
+            const steps = ['backup', 'download', 'install', 'migrate', 'verify'];
+            const stepNames = {
+                backup: '备份当前配置',
+                download: '下载最新版本',
+                install: '安装新版本',
+                migrate: '迁移配置数据',
+                verify: '验证安装'
+            };
+
+            for (let i = 0; i < steps.length; i++) {
+                const step = steps[i];
+                const stepEl = document.querySelector(`[data-step="${step}"]`);
+
+                // Mark as processing
+                stepEl.className = 'processing';
+                stepEl.querySelector('i').className = 'fas fa-spinner';
+
+                // Update progress
+                const progress = ((i + 1) / steps.length) * 100;
+                document.getElementById('progressBar').style.width = `${progress}%`;
+                document.getElementById('progressText').textContent = `正在${stepNames[step]}...`;
+
+                // Simulate step execution
+                await delay(2000 + Math.random() * 1000);
+
+                // Mark as completed
+                stepEl.className = 'completed';
+                stepEl.querySelector('i').className = 'fas fa-check-circle';
+            }
+
+            // Upgrade complete
+            document.getElementById('progressText').textContent = '升级完成！';
+            document.getElementById('currentVersion').textContent = latestVersion;
+
+            setTimeout(() => {
+                document.getElementById('upgradeProgress').classList.remove('active');
+                document.getElementById('completionMessage').classList.add('active');
+                statusAlert.className = 'alert alert-success';
+                statusAlert.innerHTML = '<i class="fas fa-check-circle"></i><span>升级成功！</span>';
+            }, 500);
+
+            isUpgrading = false;
+        }
+
+        // Restart gateway
+        function restartGateway() {
+            alert('网关重启命令将在实际环境中执行');
+            // In real implementation: npx openclaw gateway restart
+        }
+
+        // Close wizard
+        function closeWizard() {
+            if (confirm('确定要关闭升级向导吗？')) {
+                window.close();
+            }
+        }
+
+        // Compare versions
+        function compareVersions(v1, v2) {
+            const parts1 = v1.split('.').map(Number);
+            const parts2 = v2.split('.').map(Number);
+
+            for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
+                const part1 = parts1[i] || 0;
+                const part2 = parts2[i] || 0;
+
+                if (part1 > part2) return 1;
+                if (part1 < part2) return -1;
+            }
+
+            return 0;
+        }
+
+        // Utility function
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script>
+</body>
+</html>

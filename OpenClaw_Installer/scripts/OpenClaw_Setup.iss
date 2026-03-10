@@ -52,9 +52,13 @@ Name: "autostart"; Description: "{cm:AutoStartTask}"; GroupDescription: "{cm:Sta
 [Files]
 Source: "..\redist\node-v22.13.1-x64.msi"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: "..\api-guide.html"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\install-wizard.html"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\upgrade-wizard.html"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\OpenClaw Gateway"; Filename: "{cmd}"; Parameters: "/c npx openclaw gateway"; WorkingDir: "{userappdata}"; Comment: "{cm:LaunchProgram}"
+Name: "{group}\OpenClaw 安装向导"; Filename: "{cmd}"; Parameters: "/c start "" ""{app}\install-wizard.html"""; Comment: "OpenClaw 安装向导"
+Name: "{group}\OpenClaw 升级向导"; Filename: "{cmd}"; Parameters: "/c start "" ""{app}\upgrade-wizard.html"""; Comment: "OpenClaw 升级向导"
 Name: "{group}\{cm:UninstallProgram}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\OpenClaw Gateway"; Filename: "{cmd}"; Parameters: "/c npx openclaw gateway"; Tasks: desktopicon; Comment: "{cm:LaunchProgram}"
 
@@ -163,11 +167,11 @@ begin
            '控制面板：http://127.0.0.1:18789/' + #13#10 + #13#10 +
            '安装路径：' + ExpandConstant('{app}'),
            mbInformation, MB_OK);
-    if MsgBox('是否打开接入指南？' + #13#10 + #13#10 +
-              '指南包含：阿里云百炼、硅基流动配置、模型推荐',
+    if MsgBox('是否打开安装向导？' + #13#10 + #13#10 +
+              '安装向导包含：环境检查、自动安装、配置向导',
               mbConfirmation, MB_YESNO) = IDYES then
     begin
-      Exec('cmd.exe', '/c start "" "' + ExpandConstant('{app}\api-guide.html') + '"', '', SW_HIDE, ewNoWait, ResultCode);
+      Exec('cmd.exe', '/c start "" "' + ExpandConstant('{app}\install-wizard.html') + '"', '', SW_HIDE, ewNoWait, ResultCode);
     end;
   end;
 end;
